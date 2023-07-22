@@ -24,6 +24,7 @@ all: help
 install: ## install dependencies
 	brew install golang-migrate sqlc
 	go install github.com/cespare/reflex@latest
+	go install gorm.io/gen/tools/gentool@latest
 
 ## Dev
 dev: ## Run dependencies and server (with reflex)
@@ -48,8 +49,8 @@ gen: gen_sql gen_proto
 gen_graphql:
 	go run github.com/99designs/gqlgen generate --config gqlgen.yml
 
-gen_sql: dump_schema ## Generate sqlc files
-	sqlc generate
+gen_db_models:  ## Generate model files
+	gentool -db ${DATABASE_URL} -dir pkg/db/models -pkg models
 
 gen_gorm:
 	go run cmd/gen/main.go
