@@ -46,10 +46,7 @@ demo_temp: ## Run a demo of the ai
 gen: gen_sql gen_proto
 
 gen_graphql:
-	go run github.com/99designs/gqlgen generate --config gqlgen_agent.yml
-
-gen_graphql_user: ## Generate graphql user
-	go run github.com/99designs/gqlgen generate --config gqlgen_user.yml
+	go run github.com/99designs/gqlgen generate --config gqlgen.yml
 
 gen_sql: dump_schema ## Generate sqlc files
 	sqlc generate

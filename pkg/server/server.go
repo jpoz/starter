@@ -3,6 +3,7 @@ package server
 import (
 	"net/http"
 
+	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/charmbracelet/log"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -34,7 +35,6 @@ func (s *Server) Router() *chi.Mux {
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 
 	// CORS
-	// TODO Configure for both agent and user
 	r.Use(cors.Handler(cors.Options{
 		// AllowedOrigins:   []string{"https://foo.com"}, // Use this to allow specific origin hosts
 		AllowedOrigins: []string{"https://*", "http://*"},
@@ -49,6 +49,12 @@ func (s *Server) Router() *chi.Mux {
 
 	// Health check
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) { w.Write([]byte("{\"status\": \"ok\"}")) })
+
+	// Routes
+	r.Route("/graphql", func(r chi.Router) {
+		r.Get("/", playground.Handler("GraphQL playground", "/graphql/query"))
+		r.Mount("/query", s.GraphQLServer())
+	})
 
 	return r
 }
