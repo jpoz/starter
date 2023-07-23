@@ -25,6 +25,7 @@ install: ## install dependencies
 	brew install golang-migrate sqlc
 	go install github.com/cespare/reflex@latest
 	go install gorm.io/gen/tools/gentool@latest
+	go mod download
 
 .PHONY: dev
 ## Dev
