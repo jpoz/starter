@@ -14,6 +14,7 @@ func main() {
 	gormdb, err := gorm.Open(postgres.Open(os.Getenv("DATABASE_URL")), &gorm.Config{})
 	if err != nil {
 		log.Fatal(fmt.Errorf("error opening db: %w", err))
+		return
 	}
 
 	g := gen.NewGenerator(gen.Config{
@@ -22,12 +23,10 @@ func main() {
 		Mode:         gen.WithoutContext | gen.WithDefaultQuery | gen.WithQueryInterface, // generate mode
 	})
 
-	g.UseDB(gormdb) // reuse your gorm db
+	g.UseDB(gormdb)
 
 	// Generate basic type-safe DAO API for struct `models.User` following conventions
-	g.ApplyBasic(
-		g.GenerateAllTable()...,
-	)
+	g.ApplyBasic(g.GenerateAllTable()...)
 
 	// Generate Type Safe API with Dynamic SQL defined on Querier interface for `models.User` and `models.Company`
 	// g.ApplyInterface(func(MessagesQuerier) {}, models.Message{})
