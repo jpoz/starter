@@ -10,6 +10,7 @@ import (
 
 	"github.com/charmbracelet/log"
 	"github.com/jpoz/starter/pkg/config"
+	"github.com/jpoz/starter/pkg/query"
 	"github.com/jpoz/starter/pkg/server"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/driver/postgres"
@@ -63,9 +64,11 @@ func main() {
 		JWTSecret: os.Getenv("JWT_SECRET"),
 	}
 
+	q := query.Use(gormdb)
+
 	log.Info("Starting server...")
 
-	s := server.NewServer(cfg)
+	s := server.NewServer(cfg, q, r)
 	go s.ListenAndServe()
 
 	// Create a channel to listen for the termination signal

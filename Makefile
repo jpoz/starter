@@ -26,14 +26,17 @@ install: ## install dependencies
 	go install github.com/cespare/reflex@latest
 	go install gorm.io/gen/tools/gentool@latest
 
+.PHONY: dev
 ## Dev
 dev: ## Run dependencies and server (with reflex)
 	docker-compose up -d
 	reflex -r '\.(go|html)$$' -s make server
 
+.PHONY: server
 server: ## Run a local verion of the server
 	${GOCMD} run cmd/server/main.go
 
+.PHONY: cleanup
 cleanup: ## Cleanup the docker-compose
 	docker-compose down
 
@@ -44,16 +47,13 @@ demo_temp: ## Run a demo of the ai
 
 
 ## Gen
-gen: gen_sql gen_proto
+gen: gen_db gen_graphql ## Generate all the things
 
 gen_graphql:
-	go run github.com/99designs/gqlgen generate --config gqlgen.yml
+	${GOCMD} run github.com/99designs/gqlgen generate --config gqlgen.yml
 
-gen_db_models:  ## Generate model files
-	gentool -db ${DATABASE_URL} -dir pkg/db/models -pkg models
-
-gen_gorm:
-	go run cmd/gen/main.go
+gen_db: ## Generate models & queries
+	${GOCMD} run dev/gen_query/main.go
 
 ## Database
 dump_schema: ## Dump the database schema
